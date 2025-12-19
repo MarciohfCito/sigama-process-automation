@@ -1,0 +1,62 @@
+PASSOS
+1 - criação da pasta do dia
+2 - copiar modelo excel na pasta do dia
+3 - abrir o excel
+4 - copiar e colar nome e cpf
+5 - criar pasta com nome e cpf
+6 - baixar os arquivos
+
+---CRIAR PASTA----
+from pathlib import Path
+from datetime import datetime
+
+data_atual = datetime.date.today()
+
+dia_atual = data_atual.day
+mes_atual = data_atual.month
+ano_atual = data_atual.year
+
+dia = dia_atual.strftime("%d")
+mes = mes_atual.strftime("%m")
+ano = ano_atual.strftime("%Y")
+
+print(dia, mes, ano)
+
+Path("C:\SIGAMA\Documentos Solicitaçoes de Acesso\{ano}\{mes}\{dia}").mkdir(exist_ok=True)
+
+---COPIAR EXCEL---
+import shutil
+
+origem = r"C:\SIGAMA\Controle de Solicitação.xlsx"
+destino = r"C:\SIGAMA\Documentos Solicitaçoes de Acesso\{ano}\{mes}\{dia}"
+
+shutil.copy(origem, destino)
+
+--AUTOMACAO--
+
+--COPIAR E COLAR NO EXCEL--
+from openpyxl import load_workbook
+import pyperclip
+
+arquivo = r"C:\SIGAMA\Documentos Solicitaçoes de Acesso\{ano}\{mes}\{dia}\Controle de Solicitação.xlsx"
+coluna = 'A'  # coluna desejada
+nome = pyperclip.paste()
+
+wb = load_workbook(Controle de Solicitação)
+ws = wb.["Controle de Solicitação"] # ou wb["NomeDaAba"]
+
+linha = 1
+
+# encontra a primeira célula vazia
+while ws[f"{coluna}{linha}"].value is not None:
+    linha += 1
+
+# escreve o nome
+ws[f"{coluna}{linha}"] = nome
+
+# salva
+wb.save(Controle de Solicitação)
+
+---CRIAR PASTA COM NOME E CPF---
+nome_pasta = texto.replace("\t","")
+Path(nome_pasta).mkdir(exist_ok=True)

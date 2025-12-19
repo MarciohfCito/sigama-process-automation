@@ -1,0 +1,50 @@
+from pathlib import Path
+import pandas as pd
+
+caminho = Path("C:/Users/marcio.cito/Documentos/relatorios/dados.xlsx")
+df = pd.read_excel(caminho)
+
+df = pd.read_excel("arquivo.xlsx")
+df.to_excel("saida.xlsx", index=False)
+df = pd.read_excel("dados.xlsx", usecols=["A", "B", "D"])
+
+#variavel de caminho
+base = r"C:\Users\marcio.cito\Documentos"
+arquivo = "dados.xlsx"
+
+caminho = f"{base}\\{arquivo}"
+df = pd.read_excel(caminho)
+
+OBS: arquivo não permite edição ao abrir
+
+---COPIAR ARQUIVO DE UMA PASTA PARA OUTRA----
+import shutil
+
+origem = r"C:\Users\marcio.cito\Documentos\relatorios\dados.xlsx"
+destino = r"C:\Users\marcio.cito\Documentos\backup"
+
+shutil.copy(origem, destino)
+
+---PRIMEIRO PASSO----
+Receber o caminho do excel
+
+caminho original: Z:\SIGAMA\Documentos Solicitaçoes de Acesso\2025\Dezembro\19
+
+data_atual = datetime.date.today()
+dia_atual = data_atual.day
+mes_atual = data_atual.month
+ano_atual = data_atual.year
+
+caminho modificado: Z:\SIGAMA\Documentos Solicitaçoes de Acesso\{ano_atual}\{mes_atual}\{dia_atual}
+
+---PASTA----
+from pathlib import Path
+Path("nova_pasta").mkdir(exist_ok=True)
+
+---COPIAR USANDO PYAUTOGUI---
+import pyautogui
+import pyperclip
+
+pyautogui.hotkey('ctrl', 'c')
+texto = pyperclip.paste()
+print(texto)

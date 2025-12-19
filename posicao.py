@@ -10,7 +10,7 @@ print(pyautogui.size())
 #SIGAMA
 #nome1 = 26x 314y
 #nome2 = 26x 355y
-#largura = 45y - 22y
+#largura = 45y
 #meio nome = 77x
 #meio cpf = 839x
 #primeiro nome = x=77, y=336
@@ -18,7 +18,7 @@ print(pyautogui.size())
 #EXCEL
 #nome 1 = 37x 297y
 #nome 2 = 37x 323y
-#largura = 25y - 12y
+#largura = 26y
 #meio nome = 252x
 #meio cpf = 590x
 #primeiro nome = x=252, y=309
