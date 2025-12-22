@@ -5,6 +5,8 @@ time.sleep(5)
 
 print(pyautogui.position())
 print(pyautogui.size())
+# time.sleep(2)
+# pyautogui.moveTo(pyautogui.locateOnScreen('./image/carregando_image.png', confidence= 0.4))
 
 #-------- TELA CHEIA ---------
 #SIGAMA
