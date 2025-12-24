@@ -9,6 +9,40 @@ import shutil
 import os
 import sys
 import win32com.client as win32
+import socket
+import requests
+
+def internet_ativa(timeout=3):
+    try:
+        socket.create_connection(("8.8.8.8", 53), timeout=timeout)
+        return True
+    except OSError:
+        return False
+
+def sigama_online():
+    try:
+        r = requests.get("https://sigama.aged.ma.gov.br/", timeout=5)
+        return r.status_code < 500
+    except:
+        return False
+
+import requests
+
+def internet_http(url="https://www.google.com", timeout=5):
+    try:
+        r = requests.get(url, timeout=timeout)
+        return r.status_code == 200
+    except requests.RequestException:
+        return False
+
+def checar_conectividade():
+    if not internet_ativa():
+        return "SEM_INTERNET"
+    if not internet_http():
+        return "INTERNET_INSTAVEL"
+    if not sigama_online():
+        return "SIGAMA caiu"
+    return "OK"
 
 def fechar_excel_se_aberto():
     try:
@@ -26,24 +60,15 @@ def fechar_excel_se_aberto():
     except Exception:
         print("✅ Excel não está aberto")
 
+status = checar_conectividade()
+
+if status != "OK":
+    print(f"⚠️ Problema de conexão: {status}")
+    sys.exit()
+
 TIMEOUT = 60  # segundos
 
 downloads = Path("C:/Users/marcio.cito/Downloads")
-
-# def esperar_qualquer_download(timeout=60):
-#     inicio = time.time()
-#     arquivos_iniciais = set(os.listdir(downloads))
-#     for arquivo in downloads.iterdir():
-#             if arquivo.is_file():
-#                 # data de modificação
-#                 data_arquivo = date.fromtimestamp(arquivo.stat().st_mtime)
-
-#                 if data_arquivo == hoje:
-#                     if not arquivo.endswith('.crdownload'):
-#                         return os.path.join(downloads, arquivo)
-#                     if time.time() - inicio > timeout:
-#                         raise TimeoutError('⏰ Nenhum download detectado')
-#                     time.sleep(1)
 
 def esperar_qualquer_download(timeout=60):
     inicio = time.time()
@@ -60,21 +85,6 @@ def esperar_qualquer_download(timeout=60):
         if time.time() - inicio > timeout:
             raise TimeoutError('⏰ Nenhum download detectado')
 
-# -------- FUNCAO PARA CSV ---------
-def adicionar_cpf(df, cpf):
-    # garantir string
-    cpf = str(cpf).strip()
-
-    linhas_vazias = df[df['CPF'] == '']
-
-    if linhas_vazias.empty:
-        print('⚠️ Nenhuma linha disponível para inserir CPF')
-        return df  # ⛔ PARA AQUI
-
-    idx = linhas_vazias.index[-1]
-    df.at[idx, 'CPF'] = cpf
-    return df
-# ---------------------------
 pyautogui.FAILSAFE = True
 
 data_atual = datetime.today()
@@ -156,6 +166,15 @@ else:
 
 for j in range(num):
 
+    if not internet_ativa():
+        print("❌ Internet indisponível")
+        sys.exit()
+
+    if not sigama_online():
+        print("⚠️ SIGAMA fora do ar ou lento")
+        sys.exit()
+        # tenta novamente ou encerra
+
     #copiar nome - SIGAMA
     pyautogui.moveTo(posicao_a_nome_S)
     pyautogui.tripleClick()
@@ -182,29 +201,6 @@ for j in range(num):
     # salva
     wb.save(arquivo)
 
-    # ---------------------------------------
-
-    # ------------ USANDO CSV (TESTE) --------------
-
-#     nome = pyperclip.paste()
-#     arquivo = Path(
-#     "C:/SIGAMA/Documentos Solicitaçoes de Acesso",
-#     str(ano),
-#     str(mes_nome),
-#     str(dia),
-#     "teste.csv"
-# )
-
-#     df = pd.read_csv(arquivo, sep=';', dtype=str)
-#     df = df.fillna('')
-#     df.loc[len(df)] = {
-#         'NOME': nome,
-#         'CPF': ''
-#     }
-#     df.to_csv(arquivo, sep=';', index=False)
-
-    # --------------------------------------------
-
     #copiar cpf SIGAMA
     pyautogui.moveTo(posicao_a_cpf_S)
     pyautogui.doubleClick()
@@ -221,99 +217,51 @@ for j in range(num):
 
     colunas = ['A', 'B']   # colunas de destino
 
+    #criar pasta com nome e cpf
     nome_cpf = [ws[f"{col}{linha}"].value for col in colunas]
     nome_cpf_tratado = f"{nome} - {cpf}"
 
     Path("Z:/SIGAMA/Documentos Solicitaçoes de Acesso", str(ano), str(mes_nome), str(dia), nome_cpf_tratado).mkdir(exist_ok=True)
 
-    # ------------------------ COPIANDO CPF CSV ------------------
-
-    # df = pd.read_csv(arquivo, sep=';', dtype=str).fillna('')
-
-    # df = adicionar_cpf(df, cpf)
-
-    # df.to_csv(arquivo, sep=';', index=False)
-
-    # --------------------------------------------------------
-    
     #localizar lupa
     pyautogui.moveTo(posicao_a_lupa)
     pyautogui.click()
-    time.sleep(1)
-    #carregamento
-    tentativas = 0
-    max_tentativas = 5
+    
+    status = checar_conectividade()
 
-    def esperar_carregamento(
-        imagem='./image/carregando_image.png',
-        tempo_max=10,
-        confidence=0.4
-    ):
-        
-        inicio = time.time()
+    if status != "OK":
+        print(f"⚠️ Problema de conexão: {status}")
+        sys.exit()
 
-        while True:
-            try:
-                carregando = pyautogui.locateOnScreen(imagem, confidence=confidence)
-            except Exception:
-                # Se deu erro ao carregar imagem, segue o fluxo
-                print("Imagem de carregamento não encontrada (seguindo)")
-            
-                if tentativas >= max_tentativas:
-                    print("Internet lenta")
-                    fechar = pyautogui.locateCenterOnScreen(
-                        './image/X_image.png',
-                        confidence=0.8
-                    )
-                    if fechar:
-                        pyautogui.click(fechar)
-                    sys.exit("Encerrando programa")
-                else:
-                    print("Carregamento finalizado")
-                    return
-    time.sleep(0.5)
+    time.sleep(0.2)
+    #Localizar anexo de documentos
     pyautogui.moveTo(pyautogui.locateCenterOnScreen('./image/anexo_image.png', confidence = 0.8))
     x1, y1 = pyautogui.locateCenterOnScreen('./image/anexo_image.png', confidence = 0.8)
     x1 = x1 - 25
-    #clicar no doc
-    pyautogui.moveTo(x1, y1+27)
 
+    #clicar nos documentos
+    pyautogui.moveTo(x1, y1+27)
     for i in range(5):
         y1 = y1+23
         pyautogui.moveTo(x1, y1)
         time.sleep(0.5)
         pyautogui.click()
         time.sleep(0.2)
-
     time.sleep(0.2)
-
     pyautogui.click(pyautogui.locateCenterOnScreen('./image/X_image.png', confidence = 0.8))
 
-    # --------------- COPIANDO NOME E CPF CSV -------------------
-
-    # ultima_linha = df.iloc[-1]
-    # nome = ultima_linha['NOME']
-    # cpf = ultima_linha['CPF']
-
-    # nome_cpf_tratado = f"{nome} - {cpf}"
-
-    # -----------------------------------------------------------
-
-    # downloads = Path.home() / "Downloads"
-
-    destino = Path(
-    "Z:/SIGAMA/Documentos Solicitaçoes de Acesso",
+    #Colocar documentos na pasta
+    destino = Path("Z:/SIGAMA/Documentos Solicitaçoes de Acesso",
     str(ano),
     str(mes_nome),
     str(dia),
     nome_cpf_tratado
 )
     
-    destino.mkdir(exist_ok=True)
-
     hoje = date.today()
     agora = datetime.now()
 
+    #identificar erro no download
     for arquivo in downloads.iterdir():
         if arquivo.is_file():
             if arquivo.suffix != '.crdownload':
@@ -322,28 +270,14 @@ for j in range(num):
                     time.sleep(0.2)
                     shutil.move(arquivo, destino / arquivo.name)
 
-    # #localizar chrome
-    # pyautogui.click(pyautogui.locateCenterOnScreen('.\image\chrome_image.png', confidence = 0.8))
-
-
+    #iteração das posições
     posicao_a_nome_S[1] = posicao_a_nome_S[1] + 40
-
-    # posicao_a_nome_E[1] = posicao_a_nome_E[1] + 26
 
     posicao_a_cpf_S[1] = posicao_a_cpf_S[1] + 40
 
-    # posicao_a_cpf_E[1] = posicao_a_cpf_E[1] + 26
-
     posicao_a_lupa[1] = posicao_a_lupa[1] + 40
 
-# caminho_csv = Path(
-#     "C:/SIGAMA/Documentos Solicitaçoes de Acesso",
-#     str(ano),
-#     str(mes_nome),
-#     str(dia),
-#     "teste.csv"
-# )
-
+#Abrir paginas no final da execução
 caminho_pasta = Path(
     "Z:/SIGAMA/Documentos Solicitaçoes de Acesso",
     str(ano),
