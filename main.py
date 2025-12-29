@@ -1,3 +1,4 @@
+#Importando bibliotecas
 import pyautogui
 import pyperclip
 import time
@@ -8,82 +9,39 @@ import pandas as pd
 import shutil
 import os
 import sys
-import win32com.client as win32
-import socket
-import requests
 
-def internet_ativa(timeout=5):
-    try:
-        socket.create_connection(("1.1.1.1", 443), timeout=timeout)
-        return True
-    except OSError:
-        return False
-
-def sigama_online():
-    try:
-        r = requests.get("https://sigama.aged.ma.gov.br/", timeout=5)
-        return r.status_code < 500
-    except:
-        return False
-
-import requests
-
-def internet_http(url="https://www.google.com", timeout=5):
-    try:
-        r = requests.get(url, timeout=timeout)
-        return r.status_code == 200
-    except requests.RequestException:
-        return False
-
-def checar_conectividade():
-    if not internet_ativa():
-        return "SEM_INTERNET"
-    if not internet_http():
-        return "INTERNET_INSTAVEL"
-    if not sigama_online():
-        return "SIGAMA caiu"
-    return "OK"
-
-def fechar_excel_se_aberto():
-    try:
-        excel = win32.GetActiveObject("Excel.Application")
-        print("📊 Excel aberto encontrado")
-
-        for wb in excel.Workbooks:
-            if not wb.Saved:
-                wb.Save()
-                print(f"💾 Salvo: {wb.Name}")
-
-        excel.Quit()
-        print("❌ Excel fechado com sucesso")
-
-    except Exception:
-        print("✅ Excel não está aberto")
+#Importando utilitários
+from utils.connection import checar_conectividade
+from utils.validate import validate_excel, validate_folders
 
 status = checar_conectividade()
 
 if status != "OK":
-    print(f"⚠️ Problema de conexão: {status}")
+    print(f"Problema de conexão: {status}")
     sys.exit()
 
-TIMEOUT = 60  # segundos
+validate_excel()
 
-downloads = Path("C:/Users/marcio.cito/Downloads")
+TIMEOUT = 60
+
+files_directory = Path.home() / "Downloads"
+
+validate_folders(files_directory)
 
 def esperar_qualquer_download(timeout=60):
     inicio = time.time()
-    arquivos_iniciais = set(os.listdir(downloads))
+    arquivos_iniciais = set(os.listdir(files_directory))
 
     while True:
-        arquivos_atuais = set(os.listdir(downloads))
+        arquivos_atuais = set(os.listdir(files_directory))
         novos = arquivos_atuais - arquivos_iniciais
 
         for arquivo in novos:
             if not arquivo.endswith('.crdownload'):
-                return os.path.join(downloads, arquivo)
+                return os.path.join(files_directory, arquivo)
         
         if time.time() - inicio > timeout:
-            raise TimeoutError('⏰ Nenhum download detectado')
+            raise TimeoutError('Nenhum download detectado')
 
 pyautogui.FAILSAFE = True
 
@@ -167,11 +125,11 @@ else:
 for j in range(num):
 
     if not internet_ativa():
-        print("❌ Internet indisponível")
+        print("Internet indisponível")
         sys.exit()
 
     if not sigama_online():
-        print("⚠️ SIGAMA fora do ar ou lento")
+        print("SIGAMA fora do ar ou lento")
         sys.exit()
         # tenta novamente ou encerra
 
@@ -230,7 +188,7 @@ for j in range(num):
     status = checar_conectividade()
 
     if status != "OK":
-        print(f"⚠️ Problema de conexão: {status}")
+        print(f"Problema de conexão: {status}")
         sys.exit()
 
     time.sleep(0.2)
@@ -262,8 +220,8 @@ for j in range(num):
     hoje = date.today()
     agora = datetime.now()
 
-    #identificar erro no download
-    for arquivo in downloads.iterdir():
+    #identificar erro no diretório de arquivos
+    for arquivo in files_directory.iterdir():
         if arquivo.is_file():
             if arquivo.suffix != '.crdownload':
                 data_arquivo = datetime.fromtimestamp(arquivo.stat().st_mtime)
