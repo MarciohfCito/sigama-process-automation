@@ -12,77 +12,45 @@ import sys
 
 #Importando utilitários
 from utils.connection import checar_conectividade
-from utils.validate import validate_excel, validate_folders
+from utils.input import input_numres
+from utils.validate import validate_status, validate_resolution, validate_excel, validate_folders, validate_download, validate_input
+from utils.filesystem import create_directory, copy_excel_file
+
+#Importando configurações
+from config.settings import DOCUMENTOS_DIR, CONTROLE_EXCEL, DOWNLOADS_DIR
 
 status = checar_conectividade()
 
-if status != "OK":
-    print(f"Problema de conexão: {status}")
-    sys.exit()
+validate_status(status)
 
-validate_excel()
+validate_resolution()
 
 TIMEOUT = 60
 
-files_directory = Path.home() / "Downloads"
+files_directory = DOWNLOADS_DIR
 
+#Verificando pasta downloads
 validate_folders(files_directory)
 
-def esperar_qualquer_download(timeout=60):
-    inicio = time.time()
-    arquivos_iniciais = set(os.listdir(files_directory))
-
-    while True:
-        arquivos_atuais = set(os.listdir(files_directory))
-        novos = arquivos_atuais - arquivos_iniciais
-
-        for arquivo in novos:
-            if not arquivo.endswith('.crdownload'):
-                return os.path.join(files_directory, arquivo)
-        
-        if time.time() - inicio > timeout:
-            raise TimeoutError('Nenhum download detectado')
+validate_download(files_directory)
 
 pyautogui.FAILSAFE = True
 
-data_atual = datetime.today()
+dia, mes, ano = validade_date()
 
-dia = data_atual.strftime("%d")
-mes = data_atual.month
-ano = data_atual.strftime("%Y")
+validate_excel()
 
-meses = {
-    1: "Janeiro",
-    2: "Fevereiro",
-    3: "Março",
-    4: "Abril",
-    5: "Maio",
-    6: "Junho",
-    7: "Julho",
-    8: "Agosto",
-    9: "Setembro",
-    10: "Outubro",
-    11: "Novembro",
-    12: "Dezembro"
-}
-
-mes_nome = meses[mes]
-
-print(dia, mes_nome, ano)
-
-fechar_excel_se_aberto()
-
-#inserir o numero de registros
-num = int(input("Digite o número de registros: "))
-
-def minimizar():
-    pyautogui.moveTo(pyautogui.moveTo(x=1806, y=7))
-    pyautogui.click()
-    time.sleep(0.5)
+#Entrada do número de registros
+while True:
+    try:
+        num = input_numres()
+        num_validado = validate_input(num)
+        break
+    except ValueError as e:
+        print(f"Erro: {e}")
 
 #minimizar vscode
-minimizar()
-time.sleep(0.5)
+validate_vscode()
 
 #POSIÇÕES
 #POSICAO INICIAL LINHA SIGAMA = 336
@@ -105,33 +73,19 @@ PLx, PLy = pyautogui.locateCenterOnScreen('./image/operacoes_image.png', confide
 posicao_i_lupa = [PLx + 52, PLy + 34]
 posicao_a_lupa = posicao_i_lupa
 
-#Criar pastas
+#Verificando pasta documentos
+validate_folders(DOCUMENTOS_DIR)
 
-base = Path("Z:/SIGAMA/Documentos Solicitaçoes de Acesso")
-pasta = base / ano / mes_nome / dia
-pasta.mkdir(parents=True, exist_ok=True)
+#Criar e manipular pastas
+diretorio = create_directory(DOCUMENTOS_DIR, ano, mes, dia)
+copy_excel_file(CONTROLE_EXCEL, diretorio)
 
-origem = Path("Z:/SIGAMA/Controle de Solicitação.xlsx")
-destino_pasta = Path("Z:/SIGAMA/Documentos Solicitaçoes de Acesso",str(ano), str(mes_nome), str(dia))
-
-destino_arquivo = destino_pasta / origem.name
-
-if not destino_arquivo.exists():
-    shutil.copy(origem, destino_pasta)
-    print("Arquivo copiado com sucesso")
-else:
-    print("Arquivo já existe, não foi copiado")
 
 for j in range(num):
 
-    if not internet_ativa():
-        print("Internet indisponível")
-        sys.exit()
+    status = checar_conectividade()
 
-    if not sigama_online():
-        print("SIGAMA fora do ar ou lento")
-        sys.exit()
-        # tenta novamente ou encerra
+    validate_status(status)
 
     #copiar nome - SIGAMA
     pyautogui.moveTo(posicao_a_nome_S)
