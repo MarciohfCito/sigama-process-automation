@@ -4,8 +4,9 @@ import win32com.client as win32 #Permite o python interagir com ferramentas do w
 import pyautogui
 from datetime import datetime, date, timedelta
 from pathlib import Path #Permite analisarmos e manipularmos caminhos no código
+import os
 
-def validate_status():
+def validate_status(status):
     if status != "OK":
         print(f"Problema de conexão: {status}")
         sys.exit()

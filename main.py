@@ -13,7 +13,7 @@ import sys
 #Importando utilitários
 from utils.connection import checar_conectividade
 from utils.input import input_numres
-from utils.validate import validate_status, validate_resolution, validate_excel, validate_folders, validate_download, validate_input
+from utils.validate import validate_status, validate_resolution, validate_excel, validate_folders, validate_download, validate_input, validate_vscode, validade_date
 from utils.filesystem import create_directory, copy_excel_file
 
 #Importando configurações
@@ -32,7 +32,7 @@ files_directory = DOWNLOADS_DIR
 #Verificando pasta downloads
 validate_folders(files_directory)
 
-validate_download(files_directory)
+#validate_download(files_directory)
 
 pyautogui.FAILSAFE = True
 
@@ -160,6 +160,7 @@ for j in range(num):
         time.sleep(0.5)
         pyautogui.click()
         time.sleep(0.2)
+    #validate_download(files_directory)
     time.sleep(0.2)
     pyautogui.click(pyautogui.locateCenterOnScreen('./image/X_image.png', confidence = 0.8))
 
