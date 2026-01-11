@@ -89,6 +89,21 @@ pip install pyautogui pyperclip openpyxl pandas requests pywin32
 
 ## Estrutura do repositório
 
+```
+└── Projeto_Automacao
+    ├── main.py
+    ├── README.md
+    ├── .gitignore
+    ├── config
+    │   └── (arquivos de configuração)
+    ├── utils
+    │   └── (funções auxiliares)
+    └── image
+    └── (imagens, capturas, assets)
+```
+
+## Estrutura de saída esperada
+
 O script cria automaticamente a seguinte estrutura no servidor:
 
 ```
