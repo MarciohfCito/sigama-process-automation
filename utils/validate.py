@@ -4,8 +4,9 @@ import win32com.client as win32 #Permite o python interagir com ferramentas do w
 import pyautogui
 from datetime import datetime, date, timedelta
 from pathlib import Path #Permite analisarmos e manipularmos caminhos no código
+import os
 
-def validate_status():
+def validate_status(status):
     if status != "OK":
         print(f"Problema de conexão: {status}")
         sys.exit()
@@ -96,3 +97,25 @@ def validate_vscode(): #Valida se o vscode está aberto(Rodando o código) e min
     pyautogui.moveTo(pyautogui.moveTo(x=1806, y=7)) # Por enquanto só funciona em 1920x1080
     pyautogui.click()
     time.sleep(0.5)
+
+def validate_click(clicks):
+    if clicks == "1":
+        return pytautogui.click()
+    elif clicks == "2":
+        return pyautogui.doubleClick()
+    elif clicks == "3":
+        return pyautogui.tripleClick()
+    else:
+        raise ValueError("Número de cliques inválido. Use '1', '2' ou '3'.")
+
+def validate_position(position, clicks):
+    pyautogui.moveTo(position)
+    validate_click(clicks)
+    if position == "position_name" or position == "position_cpf":
+        pyautogui.hotkey('ctrl', 'c')
+        output = pyperclip.paste()
+        time.sleep(0.5)
+
+        return output
+    else:
+        continue
