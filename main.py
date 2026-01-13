@@ -93,7 +93,7 @@ for j in range(num):
     pyautogui.hotkey('ctrl', 'c')
     time.sleep(0.5)
 
-    arquivo = Path("Z:/SIGAMA/Documentos Solicitaçoes de Acesso",str(ano), str(mes_nome), str(dia), "Controle de Solicitação.xlsx")
+    arquivo = Path("Z:/SIGAMA/Documentos Solicitaçoes de Acesso",str(ano), str(mes), str(dia), "Controle de Solicitação.xlsx")
     coluna = 'A'  # coluna desejada
     nome = pyperclip.paste()
 
@@ -133,7 +133,7 @@ for j in range(num):
     nome_cpf = [ws[f"{col}{linha}"].value for col in colunas]
     nome_cpf_tratado = f"{nome} - {cpf}"
 
-    Path("Z:/SIGAMA/Documentos Solicitaçoes de Acesso", str(ano), str(mes_nome), str(dia), nome_cpf_tratado).mkdir(exist_ok=True)
+    Path("Z:/SIGAMA/Documentos Solicitaçoes de Acesso", str(ano), str(mes), str(dia), nome_cpf_tratado).mkdir(exist_ok=True)
 
     #localizar lupa
     pyautogui.moveTo(posicao_a_lupa)
@@ -167,7 +167,7 @@ for j in range(num):
     #Colocar documentos na pasta
     destino = Path("Z:/SIGAMA/Documentos Solicitaçoes de Acesso",
     str(ano),
-    str(mes_nome),
+    str(mes),
     str(dia),
     nome_cpf_tratado
 )
@@ -198,11 +198,11 @@ for j in range(num):
 caminho_pasta = Path(
     "Z:/SIGAMA/Documentos Solicitaçoes de Acesso",
     str(ano),
-    str(mes_nome),
+    str(mes),
     str(dia)
 )
 
-caminho_excel = Path("Z:/SIGAMA/Documentos Solicitaçoes de Acesso",str(ano), str(mes_nome), str(dia), "Controle de Solicitação.xlsx")
+caminho_excel = Path("Z:/SIGAMA/Documentos Solicitaçoes de Acesso",str(ano), str(mes), str(dia), "Controle de Solicitação.xlsx")
 
 # os.startfile(caminho_csv)
 os.startfile(caminho_pasta)
