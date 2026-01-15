@@ -169,7 +169,7 @@ def test_validate_position(monkeypatch):
     monkeypatch.setattr(v.pyautogui, "moveTo", lambda _: None)
     monkeypatch.setattr(v.time, "sleep", lambda _: None)
     monkeypatch.setattr(v, "validate_click", lambda _: None)
-
+    
     # se tentar copiar, deve falhar o teste
     monkeypatch.setattr(v.pyautogui, "hotkey", lambda *args: (_ for _ in ()).throw(AssertionError("não deveria copiar")))
     monkeypatch.setattr(v.pyperclip, "paste", lambda: (_ for _ in ()).throw(AssertionError("não deveria colar")))
