@@ -1,6 +1,6 @@
 import pyautogui
 
-from utils.validate import validate_download, validate_downloads_folder
+from automation.utils.validate import validate_download, validate_downloads_folder
 
 def get_name_positions():
     PNx, PNy = pyautogui.locateCenterOnScreen('./image/nome_image.png', confidence= 0.6)

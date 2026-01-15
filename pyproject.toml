@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sigama-process-automation"
+version = "0.1.0"
+description = "Automação do SIGAMA"
+requires-python = ">=3.10"
+authors = [{ name = "Enzo Maldinni" }]
+dependencies = [
+    "pyautogui",
+    "pyperclip",
+    "openpyxl",
+    "pandas",
+    "requests",
+    "pywin32"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "pytest-mock"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

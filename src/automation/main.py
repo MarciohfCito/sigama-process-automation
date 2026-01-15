@@ -2,23 +2,19 @@
 import pyautogui
 import pyperclip
 import time
-from datetime import datetime, date, timedelta
 from openpyxl import load_workbook
 from pathlib import Path
-import pandas as pd
-import shutil
 import os
-import sys
 
 #Importando utilitários
-from utils.connection import checar_conectividade
-from utils.input import input_numres
-from utils.validate import validate_status, validate_resolution, validate_excel, validate_folders, validate_downloads_folder, validate_input, validate_vscode, validade_date, validate_position, validate_click
-from utils.filesystem import create_directory, copy_excel_file
-from utils.position import get_name_positions, get_cpf_positions, get_lupa_position, get_docs_position, get_documents
+from automation.utils.connection import checar_conectividade
+from automation.utils.input import input_numres
+from automation.utils.validate import validate_status, validate_resolution, validate_excel, validate_folders, validate_downloads_folder, validate_input, validate_vscode, validade_date, validate_position, validate_click
+from automation.utils.filesystem import create_directory, copy_excel_file
+from automation.utils.position import get_name_positions, get_cpf_positions, get_lupa_position, get_docs_position, get_documents
 
 #Importando configurações
-from config.settings import DOCUMENTOS_DIR, CONTROLE_EXCEL, DOWNLOADS_DIR
+from automation.config.settings import DOCUMENTOS_DIR, CONTROLE_EXCEL, DOWNLOADS_DIR
 
 status = checar_conectividade()
 
