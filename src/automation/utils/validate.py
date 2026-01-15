@@ -2,6 +2,7 @@ import time
 import sys
 import win32com.client as win32 #Permite o python interagir com ferramentas do windows, nesse caso com o Excel
 import pyautogui
+import shutil
 from datetime import datetime, date, timedelta
 from pathlib import Path #Permite analisarmos e manipularmos caminhos no código
 import os

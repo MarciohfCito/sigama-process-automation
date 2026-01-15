@@ -1,4 +1,8 @@
 import pyautogui
+# Abaixo bibliotecas chamadas pelos testes unitários
+import time
+from datetime import datetime, date, timedelta
+from pathlib import Path #Permite analisarmos e manipularmos caminhos no código
 
 from automation.utils.validate import validate_download, validate_downloads_folder
 
