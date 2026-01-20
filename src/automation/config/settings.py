@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv # Recebe as variáveis de ambiente
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 load_dotenv(BASE_DIR / "keys.env")
 
 #print(teste)
@@ -24,6 +24,7 @@ load_dotenv(BASE_DIR / "keys.env")
 
 BASEPATH = Path(os.getenv("SIGAMA_BASEPATH")) #caminho padrão do servidor para acesso e manipulação das pastas e arquivos do projeto, criar e alterar o arquivo .env para conter o SIGAMA_BASEPATH(caminho)
 LOCAL_BASEPATH = Path(os.getenv("LOCAL_BASEPATH"))
+IMAGE_BASEPATH = Path(os.getenv("IMAGES_FOLDER"))
 
 if not BASEPATH:
     raise RuntimeError("BASEPATH não definido no .env")
@@ -34,5 +35,6 @@ if not LOCAL_BASEPATH:
 DOCUMENTOS_DIR = BASEPATH / "Documentos Solicitaçoes de Acesso"
 CONTROLE_EXCEL = BASEPATH / "Controle de Solicitação.xlsx"
 DOWNLOADS_DIR = LOCAL_BASEPATH / "Downloads"
+IMAGE_DIR = IMAGE_BASEPATH
 
 TIMEOUT = 60

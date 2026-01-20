@@ -59,7 +59,7 @@ def test_checar_conectividade_sigama_caiu(monkeypatch): # Testa o cenário em qu
     monkeypatch.setattr(c, "sigama_online", lambda: False)
     assert c.checar_conectividade() == "SIGAMA caiu"
 
-def test_checar_conectividade_ok(monkeypatch): # Testa o cenário em que tudo está ok
+def test_checar_conectividade_ok(monkeypatch): # Testa o cenário em que tudo está oks
     monkeypatch.setattr(c, "internet_ativa", lambda: True)
     monkeypatch.setattr(c, "internet_http", lambda: True)
     monkeypatch.setattr(c, "sigama_online", lambda: True)
