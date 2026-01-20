@@ -32,3 +32,7 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[project.scripts]
+sigama-cli = "automation.main:main"
+sigama-gui = "automation.ui.app:main"

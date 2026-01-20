@@ -13,7 +13,8 @@ class MainWindow(QMainWindow):
 
         ui_path = Path(__file__).parent / "resources" / "main_window.ui"
         loader = QUiLoader()
-        self.ui = loader.load(str(ui_path), self)
+        self.ui = loader.load(str(ui_path))
+        self.setCentralWidget(self.ui)
 
         self.setWindowTitle("SIGAMA Automation (Dev)")
 
