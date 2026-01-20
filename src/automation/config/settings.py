@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv # Recebe as variáveis de ambiente
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 load_dotenv(BASE_DIR / "keys.env")
 
 #print(teste)
