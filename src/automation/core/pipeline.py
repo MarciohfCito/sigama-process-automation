@@ -7,7 +7,7 @@ from pathlib import Path
 import os
 
 #Importando utilitários
-from automation.utils.connection import checar_conectividade
+from automation.utils.connection import reconnect
 from automation.utils.validate import validate_status, validate_resolution, validate_excel, validate_folders, validate_downloads_folder, validate_input, validate_vscode, validade_date, validate_position, validate_click
 from automation.utils.filesystem import create_directory, copy_excel_file
 from automation.utils.position import get_name_positions, get_cpf_positions, get_lupa_position, get_docs_position, get_documents
@@ -17,10 +17,10 @@ from automation.core.controller import RunController, StopRequested
 from automation.config.settings import DOCUMENTOS_DIR, CONTROLE_EXCEL, DOWNLOADS_DIR, IMAGE_DIR
 
 def run_pipeline(controller: RunController, num_registros: int):
-    
-        status = checar_conectividade()
 
-        validate_status(status)
+        print("teste")
+        
+        reconnect()
 
         validate_resolution()
 
@@ -60,9 +60,7 @@ def run_pipeline(controller: RunController, num_registros: int):
 
             controller.checkpoint(f"inicio_iteracao_{j}")
 
-            status = checar_conectividade()
-
-            validate_status(status)
+            reconnect()
 
             #copiar nome - SIGAMA
 
@@ -112,11 +110,9 @@ def run_pipeline(controller: RunController, num_registros: int):
             controller.checkpoint("antes_lupa")
             validate_position(position_lupa, str(1))
             
-            status = checar_conectividade()
+            reconnect()
 
-            validate_status(status)
-
-            time.sleep(0.2)
+            time.sleep(0.8)
 
             #Localizar anexo de documentos
             controller.checkpoint("antes_docs_pos")
