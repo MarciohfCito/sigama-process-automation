@@ -3,6 +3,7 @@ from pathlib import Path
 from PySide6.QtWidgets import QMainWindow, QMessageBox
 from PySide6.QtCore import QThread
 from PySide6.QtUiTools import QUiLoader
+from PySide6.QtGui import QScreen
 
 from automation.core.controller import RunController
 from automation.core.worker import PipelineWorker
@@ -17,6 +18,15 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.ui)
 
         self.setWindowTitle("SIGAMA Automation (Dev)")
+
+        #define tamanho da tela
+        self.setFixedSize(400, 300)
+
+        #centraliza tela
+        screen = self.screen().availableGeometry()
+        window = self.frameGeometry()
+        window.moveCenter(screen.center())
+        self.move(window.topLeft())
 
         self._controller = None
         self._thread = None
