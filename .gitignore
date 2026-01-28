@@ -3,3 +3,11 @@ keys.env
 __pycache__/
 *.pyc
 *.egg-info/
+
+#PyInstaller
+dist/
+build/
+*.spec
+
+#Executavel
+*.exe
