@@ -11,7 +11,7 @@ A aplicação automatiza interações gráficas com o navegador e o Excel para:
 * Realizar o download e organização dos documentos anexados a cada solicitação
 * Garantir consistência operacional por meio de validações de conectividade e estado do ambiente
 
-O projeto é voltado para **Windows** e testado no **Google Chrome**, com uso intensivo de automação de interface gráfica (RPA).
+O projeto é voltado para **Windows** e testado no **Google Chrome** e **Firefox**, com uso intensivo de automação de interface gráfica (RPA).
 
 ---
 
@@ -56,33 +56,75 @@ O projeto é voltado para **Windows** e testado no **Google Chrome**, com uso in
 * pathlib – manipulação de caminhos
 * shutil – cópia e movimentação de arquivos
 * socket – verificação de conectividade de rede
-
----
-
-## Requisitos
-
-* Windows 10 ou superior
-* Python 3.x
-* Excel 365
-* Acesso ao sistema SIGAMA via navegador
-* Resolução de tela compatível com as imagens de referência
-* Estrutura de pastas de rede configurada (ex: Z:\SIGAMA)
+* python-dotenv – leitura de variáveis de ambiente (`load_dotenv`)
+* PySide6 – interface gráfica (Qt)
 
 ---
 
 ## Instalação
 
-Clone o repositório:
+### Pré-requisitos
+- Windows 10+ (recomendado)
+- Python 3.10+ (recomendado)
+- Excel 365
+- Acesso ao SIGAMA via navegador
+- Resolução de tela compatível com as imagens de referência
+- Navegador de internet (Chrome, Firefox ou Edge)
 
+### Clonar o repositório
 ```bash
 git clone https://github.com/MarciohfCito/sigama-process-automation
 cd sigama-process-automation
 ```
 
+### Criar e ativar um ambiente virtual (recomendado)
+Windows (PowerShell):
+```bash
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+Windows (CMD):
+```bash
+python -m venv .venv
+.\.venv\Scripts\activate
+```
+
 Instale as dependências:
 
+Este projeto usa pyproject.toml. A forma recomendada é instalar o pacote em modo desenvolvimento:
+
 ```bash
-pip install pyautogui pyperclip openpyxl pandas requests pywin32
+pip install -U pip
+pip install -e .
+```
+
+### Configurar variáveis de ambiente
+A automação depende do caminho base do servidor/rede. Configure a variável:
+
+SIGAMA_BASEPATH (exemplo: Z:\SIGAMA)
+
+Você pode configurar de 2 formas:
+
+Variável no terminal:
+
+Windows (PowerShell):
+```bash
+$env:SIGAMA_BASEPATH="Z:\SIGAMA"
+```
+
+Windows (CMD):
+```bash
+set SIGAMA_BASEPATH=Z:\SIGAMA
+```
+
+Arquivo de ambiente (recomendado):
+Crie um arquivo keys.env (ou .env) e defina:
+
+```bash
+SIGAMA_BASEPATH=Z:\SIGAMA
+LOCAL_BASEPATH=<SEU_USUARIO_DO_WINDOWS>
+IMAGE_FOLDER=<PASTA_image_EM_SRC>
 ```
 
 ---
@@ -90,16 +132,45 @@ pip install pyautogui pyperclip openpyxl pandas requests pywin32
 ## Estrutura do repositório
 
 ```
-└── Projeto_Automacao
-    ├── main.py
-    ├── README.md
-    ├── .gitignore
-    ├── config
-    │   └── (arquivos de configuração)
-    ├── utils
-    │   └── (funções auxiliares)
-    └── image
-    └── (imagens, capturas, assets)
+└── sigama-process-automation
+  ├── pyproject.toml
+  ├── README.md
+  ├── .gitignore
+  ├── src
+  │   └── automation
+  │       ├── __init__.py
+  │       ├── main.py
+  │       ├── config
+  │       │   ├── __init__.py
+  │       │   └── settings.py
+  │       ├── core
+  │       │   ├── __init__.py
+  │       │   ├── controller.py
+  │       │   ├── pipeline.py
+  │       │   ├── services.py
+  │       │   └── worker.py
+  │       ├── image
+  │       └── ui
+  │           ├── __init__.py
+  │           ├── app.py
+  │           ├── main_window.py
+  │           ├── view_model.py
+  │           └── resources
+  │               └── main_window.ui
+  │       └── utils
+  │           ├── __init__.py
+  │           ├── connection.py
+  │           ├── filesystem.py
+  │           ├── input.py
+  │           ├── position.py
+  │           └── validate.py
+  └── tests
+    └── unit
+      ├── test_connection.py
+      ├── test_filesystem.py
+      ├── test_input.py
+      ├── test_position.py
+      └── test_validate.py
 ```
 
 ## Estrutura de saída esperada
@@ -135,7 +206,7 @@ Essas imagens são essenciais para o funcionamento da automação.
 
 ### Caminhos Padrão
 
-Alguns caminhos estão definidos diretamente no código e devem ser ajustados conforme o ambiente:
+Alguns caminhos estão definidos diretamente no código e pode existir necessidade de serem ajustados conforme o ambiente:
 
 * Pasta de downloads do usuário
 * Caminho da pasta SIGAMA na rede
@@ -145,11 +216,15 @@ Alguns caminhos estão definidos diretamente no código e devem ser ajustados co
 
 ## Uso
 
-Execute o script:
+Execute o script no terminal localizado em <.\sigama-process-automation\src\automation\ui>:
 
 ```bash
-python main.py
+python app.py
 ```
+
+Aplicação funcionando:
+
+
 
 Durante a execução, o sistema solicitará:
 
@@ -164,6 +239,8 @@ A automação assume que:
 * O SIGAMA já está aberto
 * A tela inicial está posicionada corretamente
 * O primeiro registro visível corresponde ao primeiro processamento
+
+Caso ocorra algum problema ajuste o ambiente de funcionamento de acordo com o log de erro explicitado, caso 
 
 ---
 
@@ -182,12 +259,28 @@ A automação assume que:
 
 ---
 
+## Rodar testes unitários
+Rode esse comando na raiz do projeto:
+
+```bash
+pytest -q tests/unit
+```
+
+Ou se quiser rodar apenas um teste específico:
+
+```bash
+pytest -q tests/unit/test_especifico
+```
+
+---
+
 ## Issues(Algumas a serem resolvidas)
 
 * Dependente de resolução de tela e layout do SIGAMA
 * Funciona apenas em Windows
 * Não é tolerante a mudanças visuais no sistema SIGAMA
 * Requer atenção do operador para posicionamento inicial correto
+* Configurações de download do navegador: certifique-se de usar a pasta de `Downloads` padrão, desativar a opção de perguntar onde salvar cada arquivo (para não abrir a janela de seleção de caminho) e desativar a abertura automática de arquivos após o download.
 
 ---
 

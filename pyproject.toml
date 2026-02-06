@@ -14,7 +14,9 @@ dependencies = [
     "openpyxl",
     "pandas",
     "requests",
-    "pywin32"
+    "pywin32",
+    "python-dotenv",
+    "PySide6"
 ]
 
 [project.optional-dependencies]
